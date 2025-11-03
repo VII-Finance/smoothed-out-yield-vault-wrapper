@@ -46,9 +46,12 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     }
 
     /// @notice Calculate smoothed profit based on time elapsed
-    /// @dev For this to work as expected, sync() must be called at least once every smoothingPeriod
-    /// we should be calculating this based on how many periods have passed. If 1 period has passed, half of the profit should be available and the other half should be smoothed over the next period
-    // if 2 periods have passed, 2/3 should be available and 1/3 should be smoothed over the next period
+    /// @dev Profit distribution logic:
+    /// - If less than a smoothing period has passed: linear distribution based on time elapsed
+    /// - If one or more periods have passed without sync:
+    ///   * 1 period passed: half of profit available immediately, the other half smoothed over next period
+    ///   * 2 periods passed: 2/3 of profit available immediately, 1/3 smoothed over next period
+    ///   * n periods passed: n/(n+1) of profit available immediately, 1/(n+1) smoothed over next period
     function _smoothedProfit() internal view returns (uint256 smoothedProfit, uint256 newRemainingPeriod) {
         uint256 timeElapsed = block.timestamp - lastSyncedTime;
         if (timeElapsed == 0) {
@@ -62,7 +65,7 @@ contract SmoothYieldVault is Ownable, ERC4626 {
             if (timeElapsed > smoothingPeriod) {
                 //smoothing periods passed
                 uint256 periodsPassed = (timeElapsed / smoothingPeriod) + 1;
-                smoothedProfit = profit / periodsPassed;
+                smoothedProfit = profit - (profit / periodsPassed);
                 profit = profit - smoothedProfit;
                 timeElapsed = timeElapsed % smoothingPeriod;
             }
