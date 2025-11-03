@@ -58,7 +58,7 @@ contract SmoothYieldVault is Ownable, ERC4626 {
             if (smoothingPeriod == 0) {
                 return (profit, 0);
             }
-            
+
             if (timeElapsed > smoothingPeriod) {
                 //smoothing periods passed
                 uint256 periodsPassed = (timeElapsed / smoothingPeriod) + 1;
