@@ -107,11 +107,11 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     /// @notice Set smoothing period (only owner)
     /// @param _smoothingPeriod New smoothing period in seconds
     function setSmoothingPeriod(uint256 _smoothingPeriod) external onlyOwner {
+        sync();
         _setSmoothingPeriod(_smoothingPeriod);
     }
 
     function _setSmoothingPeriod(uint256 _smoothingPeriod) internal {
-        // sync();
         smoothingPeriod = _smoothingPeriod;
         emit SmoothingPeriodUpdated(_smoothingPeriod);
     }
