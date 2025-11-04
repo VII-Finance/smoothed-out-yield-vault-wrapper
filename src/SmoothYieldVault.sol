@@ -7,7 +7,6 @@ import {IERC4626} from "lib/openzeppelin-contracts/contracts/interfaces/IERC4626
 import {ERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {console} from "lib/forge-std/src/console.sol";
 
 /// @title SmoothYieldVault
 /// @notice ERC4626 vault that smooths yield distribution over time for yield generating rebasing tokens instead of immediate distribution
