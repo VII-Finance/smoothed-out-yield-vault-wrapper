@@ -72,7 +72,9 @@ contract SmoothYieldVault is Ownable, ERC4626 {
 
             newRemainingPeriod =
                 remainingPeriod >= timeElapsed ? remainingPeriod - timeElapsed : smoothingPeriod - timeElapsed;
-            smoothedProfit += (profit * timeElapsed) / (newRemainingPeriod + timeElapsed);
+            if (timeElapsed != 0) {
+                smoothedProfit += (profit * timeElapsed) / (newRemainingPeriod + timeElapsed);
+            }
 
             return (smoothedProfit, newRemainingPeriod);
         }
