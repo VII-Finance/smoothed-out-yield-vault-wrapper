@@ -24,9 +24,8 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     event Sync();
 
     constructor(IERC20 _asset, uint256 _smoothingPeriod, address _owner) ERC4626(_asset) ERC20("", "") Ownable(_owner) {
-        _setSmoothingPeriod(_smoothingPeriod);
         lastSyncedTime = block.timestamp;
-        remainingPeriod = _smoothingPeriod;
+        _setSmoothingPeriod(_smoothingPeriod);
     }
 
     function name() public view override(ERC20, IERC20Metadata) returns (string memory) {
@@ -124,6 +123,7 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     }
 
     function _setSmoothingPeriod(uint256 _smoothingPeriod) internal {
+        remainingPeriod = _smoothingPeriod;
         smoothingPeriod = _smoothingPeriod;
         emit SmoothingPeriodUpdated(_smoothingPeriod);
     }
