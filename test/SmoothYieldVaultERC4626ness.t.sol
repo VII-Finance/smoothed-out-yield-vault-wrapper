@@ -10,13 +10,14 @@ contract SmoothYieldVaultERC4626ness is ERC4626Test {
 
     function setUp() public override {
         _underlying_ = address(new ERC20Mock());
-        _vault_ = address(new SmoothYieldVault(IERC20(_underlying_), smoothingPeriod));
+        _vault_ = address(new SmoothYieldVault(IERC20(_underlying_), smoothingPeriod, address(this)));
     }
 
     function setUpYield(Init memory init) public override {
         init.yield = bound(init.yield, type(int128).min, type(int128).max);
-        super.setUpYield(init);
-        vm.warp(block.timestamp + 4 hours);
+        super.setUpYield(init); //mints init.yield tokens to the vault
+        uint256 advanceTime = uint256(bound(init.yield, 0, int256(3 * smoothingPeriod)));
+        vm.warp(block.timestamp + advanceTime); //advance time
         SmoothYieldVault(_vault_).sync();
     }
 }
