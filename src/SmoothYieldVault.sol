@@ -62,7 +62,7 @@ contract SmoothYieldVault is Ownable, ERC4626 {
             if (smoothingPeriod == 0) {
                 return (profit, 0);
             }
-            // If no profit there is no profit to be distributed when a sync happens,
+            // If there is no profit to be distributed when a sync happens,
             // the remainingPeriod should be set to smoothingPeriod meaning that if
             // there is any new profit after it, it needs to be smoothed over the
             // smoothingPeriod from the start

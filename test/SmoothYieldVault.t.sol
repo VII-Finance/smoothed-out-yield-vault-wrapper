@@ -24,7 +24,6 @@ contract SmoothYieldVaultTest is Test {
         initialBalance = 1000 ether;
         profit = 10 ether;
 
-        // Example test to ensure setup works
         underlying.mint(address(this), initialBalance);
         underlying.approve(address(vault), initialBalance);
         vault.deposit(initialBalance, address(this));
@@ -62,7 +61,6 @@ contract SmoothYieldVaultTest is Test {
         initialBalance = 1000 ether;
         profit = 10 ether;
 
-        // Example test to ensure setup works
         underlying.mint(address(this), initialBalance);
         underlying.approve(address(vault), initialBalance);
         vault.deposit(initialBalance, address(this));
@@ -81,6 +79,25 @@ contract SmoothYieldVaultTest is Test {
         vm.warp(block.timestamp + 1);
         vault.sync();
         assertEq(vault.totalAssets(), initialBalance + profit);
+    }
+
+    function test_smoothingPeriod_zero(uint256 initialBalance, uint256 profit) public {
+        vault = new SmoothYieldVault(IERC20(address(underlying)), 0, owner);
+
+        initialBalance = bound(initialBalance, 1 ether, 1_000_000 ether);
+        profit = bound(profit, 1 ether, 100_000 ether);
+
+        initialBalance = 1000 ether;
+        profit = 10 ether;
+
+        underlying.mint(address(this), initialBalance);
+        underlying.approve(address(vault), initialBalance);
+        vault.deposit(initialBalance, address(this));
+
+        underlying.mint(address(vault), profit); // Simulate yield
+
+        vm.warp(block.timestamp + 1); // Advance time by 1 second
+        assertEq(vault.totalAssets(), initialBalance + profit); // all profit should be available immediately
     }
 
     function test_name_and_symbol() public {
