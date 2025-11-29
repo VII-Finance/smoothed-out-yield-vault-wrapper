@@ -115,6 +115,14 @@ contract SmoothYieldVault is Ownable, ERC4626 {
         super._withdraw(caller, receiver, owner, assets, shares);
     }
 
+    /// @notice If it is not burn or mint, sync before transfer
+    function _update(address from, address to, uint256 value) internal override {
+        if (from != address(0) && to != address(0)) {
+            sync();
+        }
+        super._update(from, to, value);
+    }
+
     /// @notice Set smoothing period (only owner)
     /// @param _smoothingPeriod New smoothing period in seconds
     function setSmoothingPeriod(uint256 _smoothingPeriod) external onlyOwner {

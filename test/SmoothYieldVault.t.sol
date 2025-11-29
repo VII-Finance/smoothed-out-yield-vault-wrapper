@@ -100,6 +100,23 @@ contract SmoothYieldVaultTest is Test {
         assertEq(vault.totalAssets(), initialBalance + profit); // all profit should be available immediately
     }
 
+    function test_sync_called_when_transfer() public {
+        uint256 initialBalance = 1000 ether;
+        uint256 profit = 10 ether;
+
+        underlying.mint(address(this), initialBalance);
+        underlying.approve(address(vault), initialBalance);
+        uint256 shares = vault.deposit(initialBalance, address(this));
+
+        underlying.mint(address(vault), profit); // Simulate yield
+
+        vm.warp(block.timestamp + 1);
+
+        vm.expectEmit();
+        emit SmoothYieldVault.Sync();
+        vault.transfer(address(1), shares);
+    }
+
     function test_name_and_symbol() public {
         assertEq(underlying.name(), "ERC20Mock");
         assertEq(underlying.symbol(), "E20M");
