@@ -92,12 +92,10 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     /// @notice Manually sync smoothed profit to lastSyncedBalance
     function sync() public {
         (uint256 smoothedProfit, uint256 newRemainingPeriod) = _smoothedProfit();
-        if (smoothedProfit > 0) {
-            lastSyncedBalance += smoothedProfit;
-            lastSyncedTime = block.timestamp;
-            remainingPeriod = newRemainingPeriod;
-            emit Sync();
-        }
+        lastSyncedBalance += smoothedProfit;
+        lastSyncedTime = block.timestamp;
+        remainingPeriod = newRemainingPeriod;
+        emit Sync();
     }
 
     function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override {
