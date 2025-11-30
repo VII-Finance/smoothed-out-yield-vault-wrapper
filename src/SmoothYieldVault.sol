@@ -97,6 +97,50 @@ contract SmoothYieldVault is Ownable, ERC4626 {
         emit Sync();
     }
 
+    modifier syncBeforeAction() {
+        sync();
+        _;
+    }
+
+    function deposit(uint256 assets, address receiver) public override syncBeforeAction returns (uint256 shares) {
+        return super.deposit(assets, receiver);
+    }
+
+    function mint(uint256 shares, address receiver) public override syncBeforeAction returns (uint256 assets) {
+        return super.mint(shares, receiver);
+    }
+
+    function withdraw(uint256 assets, address receiver, address owner)
+        public
+        override
+        syncBeforeAction
+        returns (uint256 shares)
+    {
+        return super.withdraw(assets, receiver, owner);
+    }
+
+    function redeem(uint256 shares, address receiver, address owner)
+        public
+        override
+        syncBeforeAction
+        returns (uint256 assets)
+    {
+        return super.redeem(shares, receiver, owner);
+    }
+
+    function transfer(address to, uint256 amount) public override(ERC20, IERC20) syncBeforeAction returns (bool) {
+        return super.transfer(to, amount);
+    }
+
+    function transferFrom(address from, address to, uint256 amount)
+        public
+        override(ERC20, IERC20)
+        syncBeforeAction
+        returns (bool)
+    {
+        return super.transferFrom(from, to, amount);
+    }
+
     function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override {
         lastSyncedBalance += assets;
         super._deposit(caller, receiver, assets, shares);
@@ -108,12 +152,6 @@ contract SmoothYieldVault is Ownable, ERC4626 {
     {
         lastSyncedBalance -= assets;
         super._withdraw(caller, receiver, owner, assets, shares);
-    }
-
-    /// @notice If it is not burn or mint, sync before transfer
-    function _update(address from, address to, uint256 value) internal override {
-        sync();
-        super._update(from, to, value);
     }
 
     /// @notice Set smoothing period (only owner)
