@@ -1,6 +1,6 @@
 pragma solidity ^0.8.26;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {SmoothYieldVault} from "src/SmoothYieldVault.sol";
 import {ERC20Mock} from "lib/openzeppelin-contracts/contracts/mocks/token/ERC20Mock.sol";
 import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
@@ -114,7 +114,7 @@ contract SmoothYieldVaultTest is Test {
 
         vm.expectEmit();
         emit SmoothYieldVault.Sync();
-        vault.transfer(address(1), shares);
+        assertTrue(vault.transfer(address(1), shares));
     }
 
     function test_name_and_symbol() public {
